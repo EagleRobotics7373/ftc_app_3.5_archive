@@ -139,19 +139,18 @@ public class IMUTest extends LinearOpMode{
         rightIntake.setPosition(0);
 
         waitForStart();
+            float target = 90;
 
-        float target = 0;
-        if(target < 0){
-            while(imuXAngle() > target && opModeIsActive())
-                holonomic.run(0,0,-.5);
-        }else if(target > 0){
-            while(imuXAngle() < target && opModeIsActive())
-                holonomic.run(0,0,.5);
-        }
-        holonomic.stop();
-
-
-
+            if (target < 0) {
+                while (imuZAngle() > target && opModeIsActive()) {
+                    holonomic.run(0, 0, .25);
+                }
+            } else if (target > 0) {
+                while (imuZAngle() < target && opModeIsActive()) {
+                    holonomic.run(0, 0, -.25);
+                }
+            }
+            holonomic.stop();
     }
 
     private Orientation orientation(){

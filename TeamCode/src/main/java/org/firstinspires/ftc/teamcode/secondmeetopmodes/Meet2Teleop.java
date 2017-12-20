@@ -44,7 +44,7 @@ import  org.firstinspires.ftc.teamcode.eaglerobotics.library.functions.MathOpera
  * Demonstrates empty OpMode
  */
 @TeleOp(name = "Teleop Meet 2", group = "Meet 2")
-//@Disabled
+@Disabled
 public class Meet2Teleop extends OpMode {
 
   private ElapsedTime runtime = new ElapsedTime();

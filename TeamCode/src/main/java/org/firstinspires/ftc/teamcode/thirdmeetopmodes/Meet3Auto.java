@@ -81,8 +81,8 @@ public class Meet3Auto extends LinearOpMode{
     Servo jewelManipulator;
     Servo jewelRotator;
 
-    double leftPosition = .3;
-    double rightPosition = .7;
+    double leftPosition = 0;
+    double rightPosition = 1;
     double middlePosition = .5;
 
     ColorSensor colorSensorLeft;
@@ -133,8 +133,8 @@ public class Meet3Auto extends LinearOpMode{
         imu.initialize(parameters);
 
         // Set all servo positions here...
-        jewelManipulator.setPosition(.5);
-        jewelRotator.setPosition(.5);
+        jewelManipulator.setPosition(1);
+        jewelRotator.setPosition(middlePosition);
 
         leftIntake.setPosition(1);
         rightIntake.setPosition(0);
@@ -143,6 +143,7 @@ public class Meet3Auto extends LinearOpMode{
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         VuforiaLocalizer.Parameters parametersVu = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
         parametersVu.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
+        parametersVu.vuforiaLicenseKey = "AcMSLB//////AAAAGV2X9BmFFk6Pt9dw+Dg7oCSDbgmpvFL2uaQFUQNenTRFP8eywDy/1JH+6MeeMp/aHH3L2pWVW+t2hx9saq2n72eE+/6orS0hL6ooUobxBlvKS6YQqJIQM7ZOTOIVVpgpzVODNQVdcvRW6Vm2yGrRUAPnuEScnQU9ahY8PSApozJ05M8oS33fEP8T76Y8V31jWRqaw1JIsXQRKHzmQpK5l1no4LwBQ/iCxmHHJ3h77zlfKDsP9DQrh0r/r9b8dP7sSMtCQsukfrmwD4o5uF+S6e4ScWTA4tgpXkPMYVfyjVLsynvNHhi2kuzd2goDeP1uNgpSoEXzJQQKcNeo99nKm3BU22USUBPliFrocMRYGnxb";
         this.vuforia = ClassFactory.createVuforiaLocalizer(parametersVu);
 
         VuforiaTrackables relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
@@ -161,17 +162,13 @@ public class Meet3Auto extends LinearOpMode{
 
              if (gamepad1.right_bumper) {
              startingPosition = StartingPosition.RIGHT;
-             } else if (gamepad2.left_bumper) {
+             } else if (gamepad1.left_bumper) {
              startingPosition = StartingPosition.LEFT;
              }
 
 
             telemetry.addData("Alliance Color: ", teamColor.toString());
-            if (teamColor == Color.NULL)
-                telemetry.addData("Boiiii: ", "Set the Colorrr");
-            if (startingPosition == StartingPosition.NULL) {
-                telemetry.addData("Fix it", " Pleaseee");
-            }
+            telemetry.addData("Starting Position: ", startingPosition.toString());
 
             telemetry.update();
         }
@@ -184,134 +181,89 @@ public class Meet3Auto extends LinearOpMode{
         // Check the Color
         // Rotate Forward or Backwards based on color
         if(teamColor == Color.BLUE){
-            if(colorSensorLeft.blue() > colorSensorRight.red() && colorSensorRight.red() > colorSensorLeft.blue()){
+            if(colorSensorLeft.blue() > colorSensorLeft.red() && colorSensorRight.red() > colorSensorRight.blue()){
                 jewelRotator.setPosition(rightPosition);
-            } else if(colorSensorRight.blue() > colorSensorLeft.red() && colorSensorLeft.red() > colorSensorRight.blue()){
+                telemetry.addData("B", "R");
+
+            } else if(colorSensorRight.blue() > colorSensorRight.red() && colorSensorLeft.red() > colorSensorLeft.blue()){
                 jewelRotator.setPosition(leftPosition);
+                telemetry.addData("B", "L");
             }
 
         } else if (teamColor == Color.RED) {
-            if(colorSensorLeft.blue() > colorSensorRight.red() && colorSensorRight.red() > colorSensorLeft.blue()){
+            if(colorSensorLeft.blue() > colorSensorLeft.red() && colorSensorRight.red() > colorSensorRight.blue()){
                 jewelRotator.setPosition(leftPosition);
-            } else if(colorSensorRight.blue() > colorSensorLeft.red() && colorSensorLeft.red() > colorSensorRight.blue()){
+                telemetry.addData("R", "L");
+            } else if(colorSensorRight.blue() > colorSensorRight.red() && colorSensorLeft.red() > colorSensorLeft.blue()){
                 jewelRotator.setPosition(rightPosition);
+                telemetry.addData("R", "R");
             }
         }
+        telemetry.update();
 
-        sleep(1000);
-        jewelRotator.setPosition(middlePosition);
-        sleep(1000);
+        sleep(500);
         jewelManipulator.setPosition(.5);
-
-        //Check the VuMark
-        //Attempt 3 times
-        for (int i = 0; i < 3 && opModeIsActive(); i++){
-            RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
-            if(vuMark != RelicRecoveryVuMark.UNKNOWN) {
-                visibleVuMark = vuMark;
-                break;
-            }
-            sleep(1000);
-        }
-        telemetry.addData("VuMark: ", visibleVuMark.toString());
+        sleep(500);
+        jewelRotator.setPosition(middlePosition);
+        sleep(500);
+        jewelManipulator.setPosition(1);
 
         // Grab that block
         leftIntake.setPosition(.5);
         rightIntake.setPosition(.5);
 
-        //Rasie the lift just barely
+        // Rasie the lift just barely
         leftThreadedRodLift.setPower(1);
         rightThreadedRodLift.setPower(1);
-        sleep(250);
+        sleep(500);
         leftThreadedRodLift.setPower(0);
         rightThreadedRodLift.setPower(0);
         sleep(500);
 
-        //Drive Off Platform
+        // Drive Off Platform
         if(teamColor == Color.BLUE){
             holonomic.run(-.5,0,0);
             if(startingPosition == StartingPosition.LEFT){
-
+                sleep(1600);
             }else if(startingPosition == StartingPosition.RIGHT){
-
+                sleep(2500);
             }
         } else if(teamColor == Color.RED){
             holonomic.run(.5,0,0);
             if(startingPosition == StartingPosition.LEFT){
-
+                sleep(1800);
             }else if(startingPosition == StartingPosition.RIGHT){
-
+                sleep(1000);
             }
         }
 
-        //Rotate to line up to score
-        float target = 0;
+        // Rotate to line up to score
         if(teamColor == Color.BLUE){
             if(startingPosition == StartingPosition.LEFT){
-                switch(visibleVuMark){
-                    case LEFT:
-                        target = 0;
-                        if(target < 0){
-
-                        }else if(target > 0){
-
-                        }
-                        break;
-                    case CENTER:
-                        break;
-                    case RIGHT:
-                        break;
-                    case UNKNOWN:
-                    default:
-                        break;
-                }
+               rotate(130);
             }else if(startingPosition == StartingPosition.RIGHT){
-                switch(visibleVuMark){
-                    case LEFT:
-                        break;
-                    case CENTER:
-                        break;
-                    case RIGHT:
-                        break;
-                    case UNKNOWN:
-                    default:
-                        break;
-                }
+                rotate(-55);
             }
         } else if(teamColor == Color.RED){
             if(startingPosition == StartingPosition.LEFT){
-                switch(visibleVuMark){
-                    case LEFT:
-                        break;
-                    case CENTER:
-                        break;
-                    case RIGHT:
-                        break;
-                    case UNKNOWN:
-                    default:
-                        break;
-                }
+                rotate(-55);
             }else if(startingPosition == StartingPosition.RIGHT){
-                switch(visibleVuMark){
-                    case LEFT:
-                        break;
-                    case CENTER:
-                        break;
-                    case RIGHT:
-                        break;
-                    case UNKNOWN:
-                    default:
-                        break;
-                }
+                rotate(20);
             }
         }
         holonomic.stop();
-        //Drive forward to score
+        // Drive forward to score
+        holonomic.run(.5,0,0);
+        sleep(1500);
+        holonomic.stop();
 
         //Release and Backup
-        leftIntake.setPosition(0);
-        rightIntake.setPosition(1);
+        leftIntake.setPosition(1);
+        rightIntake.setPosition(0);
         sleep(1000);
+        holonomic.run(-.5, 0, 0);
+        sleep(250);
+        holonomic.stop();
 
 
 
@@ -335,6 +287,31 @@ public class Meet3Auto extends LinearOpMode{
     }
     private float imuZAngle(){
         return imuAngles()[2];
+    }
+
+    private void rotate(int target){
+        if (target < 0) {
+            float temp = imuXAngle();
+            while (temp > target && opModeIsActive()) {
+                holonomic.run(0, 0, .2);
+
+                telemetry.addData("IMU: ", temp);
+                telemetry.update();
+
+                temp = imuXAngle();
+            }
+        } else if (target > 0) {
+            float temp = imuXAngle();
+            while (temp < target && opModeIsActive()) {
+                holonomic.run(0, 0, -.2);
+
+                telemetry.addData("IMU: ", temp);
+                telemetry.update();
+
+                temp = imuXAngle();
+            }
+        }
+        holonomic.stop();
     }
 }
 
