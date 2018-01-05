@@ -27,25 +27,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode.secondmeetopmodes;
+package org.firstinspires.ftc.teamcode.leaguetournamentopmodes;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import  org.firstinspires.ftc.teamcode.eaglerobotics.library.drivetrain.Holonomic;
-import  org.firstinspires.ftc.teamcode.eaglerobotics.library.encoder.EncoderMotor;
-import  org.firstinspires.ftc.teamcode.eaglerobotics.library.functions.MathOperations;
+import org.firstinspires.ftc.teamcode.eaglerobotics.library.drivetrain.Holonomic;
+import org.firstinspires.ftc.teamcode.eaglerobotics.library.functions.MathOperations;
 
 /**
  * Demonstrates empty OpMode
  */
-@TeleOp(name = "Teleop Meet 2", group = "Meet 2")
-@Disabled
-public class Meet2Teleop extends OpMode {
+@TeleOp(name = "Teleop LT", group = "LT")
+//@Disabled
+public class LTTeleop extends OpMode {
 
   private ElapsedTime runtime = new ElapsedTime();
 
@@ -60,9 +60,6 @@ public class Meet2Teleop extends OpMode {
   // Threaded rod lift
   DcMotor leftThreadedRodLift;
   DcMotor rightThreadedRodLift;
-  EncoderMotor leftLift;
-  EncoderMotor rightLift;
-  int position;
 
   // Intake
   Servo leftIntake;
@@ -70,9 +67,12 @@ public class Meet2Teleop extends OpMode {
 
   // Jewel Manipulator
   Servo jewelManipulator;
+  Servo jewelRotator;
 
   //ColorSensor colorSensorLeft;
   //ColorSensor colorSensorRight;
+
+    BNO055IMU imu;
 
   @Override
   public void init() {
@@ -96,6 +96,18 @@ public class Meet2Teleop extends OpMode {
 
 
     jewelManipulator = hardwareMap.servo.get("jewelManipulator");
+    jewelRotator = hardwareMap.servo.get("jewelRotator");
+
+      BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+      parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+      parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+      parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+      parameters.loggingEnabled      = true;
+      parameters.loggingTag          = "IMU";
+      parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+
+      imu = hardwareMap.get(BNO055IMU.class, "imu");
+      imu.initialize(parameters);
   }
 
   /*
@@ -115,10 +127,6 @@ public class Meet2Teleop extends OpMode {
   public void start() {
     runtime.reset();
 
-    // Set all servo positions in here...
-    jewelManipulator.setPosition(.5);
-    leftIntake.setPosition(0);
-    rightIntake.setPosition(1);
   }
 
   /*
@@ -138,30 +146,19 @@ public class Meet2Teleop extends OpMode {
       leftThreadedRodLift.setPower(-gamepad2.left_stick_y);
       rightThreadedRodLift.setPower(-gamepad2.left_stick_y);
 
-
-    telemetry.addData("Left E Val: ", leftThreadedRodLift.getCurrentPosition());
-    telemetry.addData("Right E Val: ", rightThreadedRodLift.getCurrentPosition());
-
     // Run the Intake
     if(gamepad2.right_trigger > 0){
-      leftIntake.setPosition(.45);
-      rightIntake.setPosition(.55);
+        leftIntake.setPosition(.5);
+        rightIntake.setPosition(.5);
     } else if(gamepad2.left_trigger > 0){
-      leftIntake.setPosition(0);
-      rightIntake.setPosition(1);
+      leftIntake.setPosition(1);
+      rightIntake.setPosition(0);
     } else if(gamepad2.right_bumper){
-      leftIntake.setPosition(.5);
-      rightIntake.setPosition(.5);
+      leftIntake.setPosition(.4);
+      rightIntake.setPosition(.6);
     } else if(gamepad2.left_bumper){
       leftIntake.setPosition(.3);
       rightIntake.setPosition(.7);
-    }
-
-    // Run the jewel manipulator
-    if(gamepad2.y){
-      jewelManipulator.setPosition(.5);
-    } else if(gamepad2.a){
-      jewelManipulator.setPosition(.3);
     }
   }
 }

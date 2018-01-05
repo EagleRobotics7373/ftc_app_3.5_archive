@@ -27,11 +27,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode.thirdmeetopmodes;
+package org.firstinspires.ftc.teamcode.leaguetournamentopmodes;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -47,15 +48,14 @@ import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
-import org.firstinspires.ftc.teamcode.eaglerobotics.library.Sensors.AdaIMU;
 import org.firstinspires.ftc.teamcode.eaglerobotics.library.drivetrain.Holonomic;
 
 /**
  * Demonstrates empty OpMode
  */
-@Autonomous(name = "Autonomous Meet 3", group = "Meet 3")
+@Autonomous(name = "Autonomous LT", group = "LT")
 //@Disabled
-public class Meet3Auto extends LinearOpMode{
+public class LTAuto extends LinearOpMode{
 
     private ElapsedTime runtime = new ElapsedTime();
 
