@@ -313,6 +313,34 @@ public class LTAuto extends LinearOpMode{
         }
         holonomic.stop();
     }
+
+    private void rotateP(int target){
+        double power = .3;
+        if (target < 0) {
+            float temp = imuXAngle();
+            while (temp > target && opModeIsActive()) {
+                holonomic.run(0, 0, power);
+
+                telemetry.addData("IMU: ", temp);
+                telemetry.update();
+
+                temp = imuXAngle();
+                power = (.2*(temp/target)) + .1;
+            }
+        } else if (target > 0) {
+            float temp = imuXAngle();
+            while (temp < target && opModeIsActive()) {
+                holonomic.run(0, 0, -power);
+
+                telemetry.addData("IMU: ", temp);
+                telemetry.update();
+
+                temp = imuXAngle();
+                power = (.2*(temp/target)) + .1;
+            }
+        }
+        holonomic.stop();
+    }
 }
 
 enum Color {

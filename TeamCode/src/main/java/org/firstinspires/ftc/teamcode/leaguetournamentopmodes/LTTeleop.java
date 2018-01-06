@@ -58,12 +58,10 @@ public class LTTeleop extends OpMode {
   Holonomic holonomic;
 
   // Threaded rod lift
-  DcMotor leftThreadedRodLift;
-  DcMotor rightThreadedRodLift;
+  DcMotor pLift;
 
   // Intake
-  Servo leftIntake;
-  Servo rightIntake;
+  DcMotor intake;
 
   // Jewel Manipulator
   Servo jewelManipulator;
@@ -86,13 +84,8 @@ public class LTTeleop extends OpMode {
 
     holonomic = new Holonomic(leftFrontMotor, leftRearMotor, rightFrontMotor, rightRearMotor);
 
-    leftThreadedRodLift = hardwareMap.dcMotor.get("leftThreadedRodLift");
-    rightThreadedRodLift = hardwareMap.dcMotor.get("rightThreadedRodLift");
-    leftThreadedRodLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-    rightThreadedRodLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-    leftIntake = hardwareMap.servo.get("leftIntake");
-    rightIntake = hardwareMap.servo.get("rightIntake");
+    pLift = hardwareMap.dcMotor.get("pLift");
+    intake = hardwareMap.dcMotor.get("intake");
 
 
     jewelManipulator = hardwareMap.servo.get("jewelManipulator");
@@ -142,23 +135,19 @@ public class LTTeleop extends OpMode {
 
     // Run the Threaded Rod Lift
 
-    //Run Threaed Rod Lift
-      leftThreadedRodLift.setPower(-gamepad2.left_stick_y);
-      rightThreadedRodLift.setPower(-gamepad2.left_stick_y);
+    //Run Lift
+      pLift.setPower(-gamepad2.left_stick_y);
+
 
     // Run the Intake
     if(gamepad2.right_trigger > 0){
-        leftIntake.setPosition(.5);
-        rightIntake.setPosition(.5);
+      intake.setPower(.5);
     } else if(gamepad2.left_trigger > 0){
-      leftIntake.setPosition(1);
-      rightIntake.setPosition(0);
+      intake.setPower(-.5);
     } else if(gamepad2.right_bumper){
-      leftIntake.setPosition(.4);
-      rightIntake.setPosition(.6);
+      intake.setPower(.5);
     } else if(gamepad2.left_bumper){
-      leftIntake.setPosition(.3);
-      rightIntake.setPosition(.7);
+      intake.setPower(-.5);
     }
   }
 }
