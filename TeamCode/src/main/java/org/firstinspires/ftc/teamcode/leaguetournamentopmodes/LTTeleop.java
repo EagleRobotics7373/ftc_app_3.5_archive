@@ -39,6 +39,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.eaglerobotics.library.drivetrain.Holonomic;
 import org.firstinspires.ftc.teamcode.eaglerobotics.library.functions.MathOperations;
+import org.firstinspires.ftc.teamcode.leaguetournamentopmodes.GlobalVars;
 
 /**
  * Demonstrates empty OpMode
@@ -58,7 +59,7 @@ public class LTTeleop extends OpMode {
   Holonomic holonomic;
 
   // Threaded rod lift
-  DcMotor pLift;
+  DcMotor lift;
 
   // Intake
   DcMotor intake;
@@ -72,6 +73,8 @@ public class LTTeleop extends OpMode {
 
     BNO055IMU imu;
 
+  GlobalVars vars = new GlobalVars();
+
   @Override
   public void init() {
     telemetry.addData("Status", "Initialized");
@@ -84,7 +87,7 @@ public class LTTeleop extends OpMode {
 
     holonomic = new Holonomic(leftFrontMotor, leftRearMotor, rightFrontMotor, rightRearMotor);
 
-    pLift = hardwareMap.dcMotor.get("pLift");
+    lift = hardwareMap.dcMotor.get("pLift");
     intake = hardwareMap.dcMotor.get("intake");
 
 
@@ -101,6 +104,7 @@ public class LTTeleop extends OpMode {
 
       imu = hardwareMap.get(BNO055IMU.class, "imu");
       imu.initialize(parameters);
+
   }
 
   /*
@@ -136,7 +140,7 @@ public class LTTeleop extends OpMode {
     // Run the Threaded Rod Lift
 
     //Run Lift
-      pLift.setPower(-gamepad2.left_stick_y);
+      lift.setPower(-gamepad2.left_stick_y);
 
 
     // Run the Intake
@@ -149,5 +153,11 @@ public class LTTeleop extends OpMode {
     } else if(gamepad2.left_bumper){
       intake.setPower(-.5);
     }
+
+    // Set Jewel manipulator position
+    jewelManipulator.setPosition(vars.jewelManipulatorStoredPosition);
+    jewelRotator.setPosition(vars.jewelRotatorStoredPosition);
   }
+
+
 }
